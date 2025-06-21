@@ -8,4 +8,7 @@ pillow
 requests
 tiktoken
 psycopg2
-pytest
+numpy
+PyYAML
+sentence-transformers
+chromadb

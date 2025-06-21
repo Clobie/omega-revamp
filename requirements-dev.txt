@@ -1,0 +1,16 @@
+OpenAI
+aiohttp
+asyncio
+configparser
+discord
+qrcode
+pillow
+requests
+tiktoken
+psycopg2
+numpy
+PyYAML
+sentence-transformers
+chromadb
+pytest
+coverage
