@@ -2,7 +2,7 @@ import unittest
 from unittest import mock
 import asyncio
 import os
-import json
+import yaml
 import builtins
 
 from utils.cog import CogLoader
@@ -13,8 +13,8 @@ class TestCogLoader(unittest.IsolatedAsyncioTestCase):
 		self.patcher_listdir = mock.patch('os.listdir', return_value=['testcog.py', 'anothercog.py'])
 		self.mock_listdir = self.patcher_listdir.start()
 
-		# Patch open to simulate config file reading/writing
-		self.mock_open = mock.mock_open(read_data=json.dumps({'testcog': 'enabled'}))
+		# Patch open to simulate YAML config file reading
+		self.mock_open = mock.mock_open(read_data="testcog: enabled\n")
 		self.patcher_open = mock.patch('builtins.open', self.mock_open)
 		self.patcher_open.start()
 
@@ -89,9 +89,9 @@ class TestCogLoader(unittest.IsolatedAsyncioTestCase):
 		self.cog_loader.logger.info.assert_called_with('Reloaded cog: cogs.testcog')
 
 	async def test_load_config_fails_gracefully(self):
-		# Patch open to raise JSONDecodeError
+		# Patch open to raise YAMLError
 		with mock.patch('builtins.open', mock.mock_open()) as mock_file:
-			mock_file.side_effect = json.JSONDecodeError("msg", "doc", 0)
+			mock_file.side_effect = yaml.YAMLError("bad yaml")
 			config = self.cog_loader._load_config()
 			self.assertEqual(config, {})
 			self.cog_loader.logger.error.assert_called()
