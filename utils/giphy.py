@@ -86,5 +86,3 @@ class Giphy:
 		except Exception as e:
 			self.logger.error(f"Error getting reaction GIF: {e}")
 		return None
-
-gfy = Giphy()
