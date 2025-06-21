@@ -1,16 +1,14 @@
-# utils/cog.py
-
 import os
-import json
+import yaml
 from utils.logger import Logger
 
-CONFIG_PATH = './config/cogs.json'
+CONFIG_PATH = './config/cogs.yaml'
 COGS_DIR = './cogs'
 
 class CogLoader:
 	"""
 	Singleton Cog Loader for managing Discord bot cogs.
-	Loads cog config from JSON, auto-imports new cogs, and handles enabling,
+	Loads cog config from YAML, auto-imports new cogs, and handles enabling,
 	disabling, loading, and reloading of cogs for the bot.
 
 	Usage:
@@ -27,14 +25,6 @@ class CogLoader:
 		return cls._instance
 
 	def __init__(self, config_path=CONFIG_PATH, cogs_dir=COGS_DIR, logger=None):
-		"""
-		Initialize the CogLoader singleton.
-
-		Args:
-			config_path (str): Path to cogs config JSON file.
-			cogs_dir (str): Directory containing cog files.
-			logger (Logger): Optional logger instance; will create one if None.
-		"""
 		if getattr(self, '_initialized', False):
 			return
 
@@ -47,29 +37,27 @@ class CogLoader:
 		self._initialized = True
 
 	def _load_config(self):
-		"""Load the cog configuration from JSON file or return empty dict."""
+		"""Load the cog configuration from YAML file or return empty dict."""
 		if os.path.exists(self.config_path):
 			try:
 				with open(self.config_path, 'r', encoding='utf-8') as f:
-					return json.load(f)
-			except (json.JSONDecodeError, IOError) as e:
-				self.logger.error(f"Failed to load config: {e}")
+					data = yaml.safe_load(f)
+					return data if isinstance(data, dict) else {}
+			except (yaml.YAMLError, IOError) as e:
+				self.logger.error(f"Failed to load YAML config: {e}")
 		return {}
 
 	def _save_config(self):
-		"""Save the current cog config to JSON file."""
+		"""Save the current cog config to YAML file."""
 		try:
 			os.makedirs(os.path.dirname(self.config_path), exist_ok=True)
 			with open(self.config_path, 'w', encoding='utf-8') as f:
-				json.dump(self.config, f, indent=4)
+				yaml.dump(self.config, f, default_flow_style=False, sort_keys=True)
 		except IOError as e:
-			self.logger.error(f"Failed to save config: {e}")
+			self.logger.error(f"Failed to save YAML config: {e}")
 
 	def _import_cogs(self):
-		"""
-		Scan the cogs directory and add new cog filenames (without .py) to config as 'enabled'.
-		Save the updated config file.
-		"""
+		"""Scan cogs directory and add new cogs as 'enabled' in the config."""
 		try:
 			for filename in os.listdir(self.cogs_dir):
 				if filename.endswith('.py'):
@@ -82,13 +70,6 @@ class CogLoader:
 			self.logger.error(f"Cogs directory not found: {self.cogs_dir}")
 
 	async def enable_cog(self, bot, cog_name):
-		"""
-		Enable (load) a cog by name.
-
-		Args:
-			bot (discord.Client or commands.Bot): The Discord bot instance.
-			cog_name (str): The cog name without prefix.
-		"""
 		full_name = f"cogs.{cog_name}"
 		try:
 			await bot.load_extension(full_name)
@@ -99,13 +80,6 @@ class CogLoader:
 			self.logger.error(f"Failed to enable cog {full_name}: {e}")
 
 	async def disable_cog(self, bot, cog_name):
-		"""
-		Disable (unload) a cog by name.
-
-		Args:
-			bot (discord.Client or commands.Bot): The Discord bot instance.
-			cog_name (str): The cog name without prefix.
-		"""
 		full_name = f"cogs.{cog_name}"
 		try:
 			await bot.unload_extension(full_name)
@@ -116,12 +90,6 @@ class CogLoader:
 			self.logger.error(f"Failed to disable cog {full_name}: {e}")
 
 	async def load_cogs(self, bot):
-		"""
-		Load all enabled cogs into the bot.
-
-		Args:
-			bot (discord.Client or commands.Bot): The Discord bot instance.
-		"""
 		enabled_cogs = [cog for cog, status in self.config.items() if status == 'enabled']
 		try:
 			for cog_name in enabled_cogs:
@@ -132,13 +100,6 @@ class CogLoader:
 			self.logger.error(f"Failed to load cog {full_name}: {e}")
 
 	async def reload_cog(self, bot, cog_name):
-		"""
-		Reload a single cog.
-
-		Args:
-			bot (discord.Client or commands.Bot): The Discord bot instance.
-			cog_name (str): The cog name without prefix.
-		"""
 		full_name = f"cogs.{cog_name}"
 		try:
 			await bot.reload_extension(full_name)

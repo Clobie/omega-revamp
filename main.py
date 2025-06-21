@@ -7,7 +7,7 @@ import asyncio
 from core.core import Core
 
 core = Core(
-    config_path = "./config/bot.conf"
+    config_path = "./config/bot.yaml"
 )
 
 async def main_thread():

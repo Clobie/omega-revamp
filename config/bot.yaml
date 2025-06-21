@@ -1,18 +1,18 @@
-# config/bot.conf
+# config/bot.yml
 # 
 # Entries are imported as variables of the Config class
 # If the value is 'ENV', the config will use the environment variable with the key name.
 # Any other value will use the specified value directly.
 
-[Bot]
-COMMAND_PREFIX = !
+# Bot configuration
+COMMAND_PREFIX: !
 
-[Api]
-DISCORD_BOT_TOKEN = ENV
+# API
+DISCORD_BOT_TOKEN: ENV
 
-[Database]
-DB_NAME = ENV
-DB_USER = ENV
-DB_PASS = ENV
-DB_HOST = db
-DB_PORT = 5432
+# Database configuration
+DB_NAME: ENV
+DB_USER: ENV
+DB_PASS: ENV
+DB_HOST: db
+DB_PORT: 5432
