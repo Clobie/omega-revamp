@@ -1,3 +1,5 @@
+# utils/ai.py
+
 from openai import OpenAI
 import tiktoken
 import requests

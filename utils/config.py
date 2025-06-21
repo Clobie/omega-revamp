@@ -1,3 +1,5 @@
+# utils/config.py
+
 import configparser
 import os
 import discord

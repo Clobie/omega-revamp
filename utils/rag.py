@@ -1,3 +1,5 @@
+# utils/rag.py
+
 from sentence_transformers import SentenceTransformer
 import chromadb
 from chromadb.config import Settings
