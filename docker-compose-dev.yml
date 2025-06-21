@@ -1,0 +1,94 @@
+services:
+  db:
+    image: postgres:16
+    container_name: postgres-db
+    environment:
+      POSTGRES_USER: test
+      POSTGRES_PASSWORD: test
+      POSTGRES_DB: test
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+      - ./sql/db_init.sql:/docker-entrypoint-initdb.d/db_init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U test"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    command: >
+      /bin/bash -c "
+      rm -rf /var/lib/postgresql/data/* &&
+      docker-entrypoint.sh postgres &
+
+      pid=$!
+
+      until pg_isready -U test; do
+        sleep 1
+      done
+
+      psql -U test -d test -f /docker-entrypoint-initdb.d/db_init.sql
+
+      wait $pid
+      "
+
+  bot:
+    image: python:3.11-slim
+    container_name: discord-bot-test
+    depends_on:
+      db:
+        condition: service_healthy
+    working_dir: /app
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./:/app:delegated
+    env_file:
+      - .env
+    environment:
+      - PYTHONUNBUFFERED=1
+      - DATABASE_URL=postgresql://test:test@db:5432/test
+    command: |
+      /bin/bash -c "
+      set -e
+      echo '------------------------------------------------------------------------------------------------'
+      echo 'Running updates'
+      echo '------------------------------------------------------------------------------------------------'
+      apt-get update
+      echo ' '
+      echo ' '
+
+      echo '------------------------------------------------------------------------------------------------'
+      echo 'Installing dependencies'
+      echo '------------------------------------------------------------------------------------------------'
+      apt-get install -y libpq-dev build-essential iproute2
+      pip install -r requirements-dev.txt
+      echo ' '
+      echo ' '
+
+      echo '------------------------------------------------------------------------------------------------'
+      echo 'Running tests'
+      echo '------------------------------------------------------------------------------------------------'
+      python -m coverage run -m unittest discover -s tests
+      echo ' '
+      echo ' '
+
+      echo '------------------------------------------------------------------------------------------------'
+      echo 'Generating coverage report'
+      echo '------------------------------------------------------------------------------------------------'
+      python -m coverage html --ignore-errors
+      python3 -m http.server 8000 --directory /app &
+      sleep 2
+      echo '--- Coverage report available at http://localhost:8000/htmlcov/index.html ---'
+      echo ' '
+      echo ' '
+
+      echo '------------------------------------------------------------------------------------------------'
+      echo 'Bot starting'
+      echo '------------------------------------------------------------------------------------------------'
+      python main.py
+      "
+
+    tty: true
+    stdin_open: true
+
+volumes:
+  pgdata:
