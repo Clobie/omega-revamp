@@ -115,3 +115,40 @@ root/
   `http://localhost:8000/htmlcov/index.html`  
 
 ---
+
+## 💬 Commit Style
+
+Follow [Conventional Commits](https://www.conventionalcommits.org/) for clear and consistent messages:
+
+| Tag        | Purpose                                                                  |
+| ---------- | ------------------------------------------------------------------------ |
+| `feat`     | A new feature                                                            |
+| `fix`      | A bug fix                                                                |
+| `docs`     | Documentation changes (e.g., README, comments)                           |
+| `style`    | Code style changes (formatting, white-space, missing semicolons, etc.)   |
+| `refactor` | Code change that neither fixes a bug nor adds a feature                  |
+| `perf`     | A change that improves performance                                       |
+| `test`     | Adding or updating tests                                                 |
+| `build`    | Changes that affect the build system or dependencies (e.g., npm, Docker) |
+| `ci`       | Changes to CI configuration files and scripts (GitHub Actions, Travis)   |
+| `chore`    | Routine maintenance (e.g., version bumps, package.json updates)          |
+| `revert`   | Reverts a previous commit                                                |
+
+**Example:**
+
+```bash
+feat(reactor): Created reactor cog
+```
+
+---
+
+## 🧑‍💻 Coding Style
+
+> This section reflects current project conventions. Contributors should match the existing style for consistency.
+
+- Tabs instead of spaces for indentation.
+- Class names use `PascalCase`.
+- Function and variable names use `snake_case`.
+- Imports are grouped: standard library, third-party, local modules.
+- Avoid unnecessary comments – code should be self-documenting when possible.
+- Use docstrings for public classes and functions.
