@@ -1,43 +1,61 @@
 # omega-revamp
 
+A development environment for the Omega Discord bot using Docker Compose.
+
 ---
 
-## Setup
+## ⚙️ Setup
 
-1. Create a `.env` file in the root directory (`.`) with the following contents:
+1. Create a `.env` file in the root of the project (`.`) with the following content:
 
-```env
-DISCORD_BOT_TOKEN=XXXX
-DB_USER=test
-DB_PASS=test
-DB_HOST=127.0.0.1
-DB_NAME=test
-DB_PORT=5432
-PGADMIN_EMAIL=admin@example.com
-PGADMIN_PASS=admin
-PGADMIN_PORT=5050
-COVERAGE_PORT=8000
+    ```env
+    DISCORD_BOT_TOKEN=XXXX
+    DB_USER=test
+    DB_PASS=test
+    DB_HOST=127.0.0.1
+    DB_NAME=test
+    DB_PORT=5432
+    PGADMIN_EMAIL=admin@example.com
+    PGADMIN_PASS=admin
+    PGADMIN_PORT=5050
+    COVERAGE_PORT=8000
+    ```
+
+    > 🔒 Replace `XXXX` with your actual Discord bot token.  Edit others as needed.
+
+---
+
+## ▶️ Starting and connecting to the container
+
+Start the development environment and open a shell inside the bot container. Run the following commands **from the project root**:
+
+```bash
+docker-compose -f docker-compose-dev.yaml up -d
+docker exec -it bot bash
 ```
 
-Replace `XXXX` with your actual Discord bot token.
+---
+
+## ⏹️ Setting up services and running the bot
+
+To run the setup, run the following commands **inside the container**:
+
+```bash
+chmod +x setup.sh
+./setup.sh
+```
+
+To run the bot, run the following command **inside the container**:
+
+```bash
+python main.py
+```
 
 ---
 
-## Running the services
+## ⏹️ Shutting Down
 
-Start all services and open an interactive shell in the bot container by running the appropriate command for your shell environment **from the project root**:
-
-| Environment                 | Command                                                                                       |
-|-----------------------------|-----------------------------------------------------------------------------------------------|
-| **PowerShell**              | `docker-compose -f docker-compose-dev.yaml up -d ; docker exec -it bot bash`                 |
-| **Command Prompt (cmd.exe)**| `docker-compose -f docker-compose-dev.yaml up -d && docker exec -it bot bash`                |
-| **Linux / macOS (bash/zsh)**| `docker-compose -f docker-compose-dev.yaml up -d && docker exec -it bot bash`                |
-
----
-
-## Shutting down
-
-To stop and remove all running containers, networks, and volumes created by the compose file, run:
+To stop and remove all services, containers, and networks created by Docker Compose:
 
 ```bash
 docker-compose -f docker-compose-dev.yaml down
@@ -45,10 +63,11 @@ docker-compose -f docker-compose-dev.yaml down
 
 ---
 
-## Notes
+## 📝 Notes
 
-- Ensure Docker and Docker Compose are installed and running on your machine.
-- The `.env` file provides environment variables to configure the bot, database, and pgAdmin services.
-- The bot container will be accessible on the port specified by `COVERAGE_PORT` in your `.env` file.
+- Ensure Docker and Docker Compose are installed and running.
+- All configuration is handled through the `.env` file.
+- The Discord bot’s coverage report will be available at:  
+  `http://localhost:8000/htmlcov/index.html`  
 
 ---
