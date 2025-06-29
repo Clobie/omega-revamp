@@ -8,21 +8,31 @@ from utils.common import Common
 from utils.database import Database
 from utils.token import Token
 from utils.cog import CogLoader
+from utils.personality import PersonalityManager  # import PersonalityManager
+from utils.ai import AI
+from utils.giphy import Giphy
+from utils.rag import Rag
 
 class Core:
 	"""
 	Core class to initialize and run the Discord bot along with its utilities.
 	"""
 
-	def __init__(self, config_path: str):
+	def __init__(self, config_path: str, personalities_path: str = "./config/personalities.yaml"):
 		self.logger = None
-		self.cfg = None
 		self.db = None
 		self.common = None
 		self.token = None
 		self.bot = None
+		self.cog_loader = None
+		self.personalities_path = personalities_path
+		self.personalities = None
 		self.config_path = config_path
+		self.config = None
 		self.logger = Logger()
+		self.ai = None
+		self.giphy = None
+		self.rag = None
 
 	def load_utils(self) -> bool:
 		"""
@@ -33,10 +43,13 @@ class Core:
 		"""
 
 		try:
-			self.cfg = Config(self.config_path)
-			self.db = Database(self.cfg)
+			self.config = Config(self.config_path)
+			self.db = Database(self.config)
 			self.common = Common()
 			self.token = Token()
+			self.personalities = PersonalityManager(self.personalities_path)  # load personalities
+			self.ai = AI()
+			self.rag = Rag()
 			return True
 		except Exception as e:
 			self.logger.error(f"Utility initialization failed: {e}")
@@ -53,7 +66,7 @@ class Core:
 			intents = discord.Intents.default()
 			intents.message_content = True
 			self.bot = commands.Bot(
-				command_prefix=self.cfg.COMMAND_PREFIX,
+				command_prefix=self.config.COMMAND_PREFIX,
 				intents=intents
 			)
 			self.bot.remove_command("help")
@@ -102,7 +115,7 @@ class Core:
 
 		try:
 			self.logger.info("Starting bot...")
-			await self.bot.start(self.cfg.DISCORD_BOT_TOKEN)
+			await self.bot.start(self.config.DISCORD_BOT_TOKEN)
 			self.logger.info("Bot started successfully.")
 		except Exception as e:
 			self.logger.error(f"Failed to start bot: {e}")
