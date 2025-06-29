@@ -1,5 +1,6 @@
 # utils/rag.py
-
+import os
+os.environ["ANONYMIZED_TELEMETRY"] = "False" # disable anonymized telemetry for ChromaDB
 from sentence_transformers import SentenceTransformer
 import chromadb
 from chromadb.config import Settings
@@ -32,7 +33,7 @@ class Rag:
 			raise
 
 		try:
-			self.chroma = chromadb.PersistentClient(path="./rag_db", settings=Settings())
+			self.chroma = chromadb.PersistentClient(path="./rag_db", settings=Settings(anonymized_telemetry=False))
 			self.collection = self.chroma.get_or_create_collection("discord_knowledge")
 		except Exception as e:
 			self.logger.error(f"Error initializing ChromaDB client or collection: {e}")
