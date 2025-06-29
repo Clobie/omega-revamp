@@ -63,10 +63,54 @@ docker-compose -f docker-compose-dev.yaml down
 
 ---
 
+
+## 🧩 Creating Cogs
+
+Cogs are modular components of the bot and should be placed in the `./cogs/` directory.
+
+If a cog requires persistent or static data, place it in a subdirectory of `./cogs/cogdata/` using the same name as the cog.
+
+### 📄 Example Cog: `cogs/template.py`
+
+```python
+# cogs/template.py
+
+import discord
+from discord.ext import commands, tasks
+import os
+
+class TemplateSimple(commands.Cog):
+    def __init__(self, bot: commands.Bot):
+        self.bot = bot
+        # Initialize anything needed here
+
+async def setup(bot: commands.Bot):
+    cog = TemplateSimple(bot)
+    await bot.add_cog(cog)
+```
+
+### 📁 Directory Structure
+
+```
+root/
+├── cogs/
+│   ├── template.py
+│   └── ...
+└── cogs/cogdata/
+    └── template/
+        └── any_data_you_need.json
+```
+
+> 🛠️ New cogs will auto-register and enable.  If you want it disabled by default, edit `./config/cogs.yaml`
+
+---
+
 ## 📝 Notes
 
 - Ensure Docker and Docker Compose are installed and running.
-- All configuration is handled through the `.env` file.
+- All general configuration is handled through the `.env` file.
+- All cog configuration is handled through the `cogs.yaml` file.
+- All personalities are handles through the `personalities.yaml` file.
 - The Discord bot’s coverage report will be available at:  
   `http://localhost:8000/htmlcov/index.html`  
 
