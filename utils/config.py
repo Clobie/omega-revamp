@@ -33,7 +33,7 @@ class Config:
 		try:
 			value = object.__getattribute__(self, name)
 			if name.isupper():
-				object.__getattribute__(self, 'logger').info(f"Accessed config variable: {name}")
+				object.__getattribute__(self, 'logger').debug(f"Accessed config variable: {name}")
 			return value
 		except AttributeError:
 			logger = object.__getattribute__(self, 'logger')
