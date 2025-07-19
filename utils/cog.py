@@ -98,6 +98,16 @@ class CogLoader:
 				self.logger.info(f"Loaded cog: {full_name}")
 		except Exception as e:
 			self.logger.error(f"Failed to load cog {full_name}: {e}")
+	
+	async def load_cog(self, bot, cog_name):
+		full_name = f"cogs.{cog_name}"
+		try:
+			await bot.load_extension(full_name)
+			self.config[cog_name] = 'enabled'
+			self._save_config()
+			self.logger.info(f"Loaded cog: {full_name}")
+		except Exception as e:
+			self.logger.error(f"Failed to load cog {full_name}: {e}")
 
 	async def reload_cog(self, bot, cog_name):
 		full_name = f"cogs.{cog_name}"
@@ -106,3 +116,7 @@ class CogLoader:
 			self.logger.info(f"Reloaded cog: {full_name}")
 		except Exception as e:
 			self.logger.error(f"Failed to reload cog {full_name}: {e}")
+
+	async def get_enabled_cogs(self):
+		"""Return a list of enabled cogs."""
+		return [cog for cog, status in self.config.items() if status == 'enabled']
