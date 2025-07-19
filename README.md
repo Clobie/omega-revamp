@@ -41,8 +41,8 @@ docker exec -it bot bash
 To run the setup, run the following commands **inside the container**:
 
 ```bash
-chmod +x setup.sh
-./setup.sh
+chmod +x setup-dev.sh
+./setup-dev.sh
 ```
 
 To run the bot, run the following command **inside the container**:
