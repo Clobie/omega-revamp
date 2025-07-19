@@ -4,6 +4,8 @@ from openai import OpenAI
 import tiktoken
 import requests
 from utils.logger import Logger
+from utils.personality import Personality
+from utils.rag import Rag
 
 class AI:
 	"""Singleton wrapper for OpenAI and Ollama chat completions."""
@@ -23,6 +25,7 @@ class AI:
 
 		self.client = OpenAI()
 		self.logger = Logger()
+		self.rag = Rag()
 		self.ollama_url = "http://localhost:11434/api/chat"
 		self._initialized = True
 
@@ -76,6 +79,20 @@ class AI:
 			self.logger.error(f"Ollama completion error (model={model}): {e}")
 			return f"Error: {str(e)}"
 
+	def openai_summarize_conversation(self, model: str, context: list) -> str:
+		"""Summarize a conversation using OpenAI."""
+		try:
+			summary = self.client.chat.completions.create(
+				model=model,
+				messages=context + [{"role": "user", "content": "Please summarize our conversation with detail.  It will be used to update my user document (memory)."}]
+			)
+			response = summary.choices[0].message.content.strip()
+			self.logger.debug(f"OpenAI summarize success (model={model}): {response}")
+			return response
+		except Exception as e:
+			self.logger.error(f"OpenAI summarize error (model={model}): {e}\nContext: {context}")
+			return f"Error: {str(e)}"
+
 	def ollama_chat_completion_with_context(self, model: str, context: list) -> str:
 		"""Get Ollama response from full conversation context."""
 		payload = {
@@ -126,3 +143,49 @@ class AI:
 		"""
 		encoding = tiktoken.encoding_for_model(model)
 		return len(encoding.encode(text))
+
+	def build_context(self, personality: Personality, rag_data: str = None, previous_context: list = []) -> list:
+		"""
+		Build the context for the chat completion request.
+
+		Parameters:
+			personality (Personality): The personality to use for the chat.
+			rag_data (str): The RAG data to include in the context.
+			previous_context (list): The previous context messages.
+
+		Returns:
+			list: The constructed context for the chat completion request.
+		"""
+
+		context = previous_context.copy()
+
+		if context and context[0].get("role") == "system":
+			context.pop(0)
+		
+		system_prompt = personality.get_system_prompt()
+
+		if rag_data:
+			system_prompt += f"\n\n{rag_data}"
+
+		context.insert(0, {"role": "system", "content": system_prompt})
+
+		return context
+	
+	def append_context(self, context: list, role: str, content: str) -> list:
+		"""
+		Append a new message to the context.
+
+		Parameters:
+			context (list): The current context messages.
+			role (str): The role of the message ('user', 'assistant', etc.).
+			content (str): The content of the message.
+
+		Returns:
+			list: The updated context with the new message appended.
+		"""
+		context.append({"role": role, "content": content})
+
+		if not isinstance(role, str) or not isinstance(content, str):
+			self.logger.error("Invalid role or content type in append_context")
+			return None
+		return context
