@@ -106,6 +106,22 @@ class Rag:
 		except Exception as e:
 			self.logger.error(f"Error querying collection: {e}")
 		return []
+	
+	def get_documents(self, ids: list[str] = None) -> str:
+		"""Retrieve documents by IDs or all if no IDs provided. Returns string: id\\ndocument\\n\\n"""
+		try:
+			if ids:
+				results = self.collection.get(ids=ids, include=["documents", "ids"])
+				if results and "documents" in results and "ids" in results:
+					return "\n\n".join(
+						f"{doc_id}\n{doc}"
+						for doc_id, doc in zip(results["ids"], results["documents"])
+					)
+				return ""
+			return ""
+		except Exception as e:
+			self.logger.error(f"Error retrieving documents: {e}")
+			return ""
 
 	def delete_document_by_id(self, doc_id: str):
 		"""Delete document from collection by document ID."""
