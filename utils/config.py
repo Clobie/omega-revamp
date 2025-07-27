@@ -4,7 +4,6 @@ import discord
 from utils.logger import Logger
 
 class Config:
-	"""Singleton YAML configuration loader with ENV support, runtime access, and save capability."""
 
 	_instance = None
 
@@ -17,7 +16,7 @@ class Config:
 		if hasattr(self, "_initialized") and self._initialized:
 			return
 
-		self.config_path = config or './config/bot.yaml'
+		self.config_path = config
 		self.logger = logger or Logger()
 		self._missing_vars = set()
 
@@ -32,8 +31,6 @@ class Config:
 	def __getattribute__(self, name):
 		try:
 			value = object.__getattribute__(self, name)
-			if name.isupper():
-				object.__getattribute__(self, 'logger').debug(f"Accessed config variable: {name}")
 			return value
 		except AttributeError:
 			logger = object.__getattribute__(self, 'logger')

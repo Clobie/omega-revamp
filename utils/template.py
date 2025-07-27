@@ -21,18 +21,11 @@ class SingletonUtility:
 		return cls._instance
 
 	def __init__(self, some_param=None):
-		if getattr(self, '_initialized', False):
+		if hasattr(self, "_initialized") and self._initialized:
 			return
 		
-		# Initialize logger
 		self.logger = Logger()
-
-		# Initialize only once
-		self.some_param = some_param
-		# Add your initialization code here
-
 		self._initialized = True
 
 	def do_something(self, data):
-		# Replace with your utility method
 		self.logger.info(f"Doing something with {data}")

@@ -8,18 +8,15 @@ from utils.personality import Personality
 from utils.rag import Rag
 
 class AI:
-	"""Singleton wrapper for OpenAI and Ollama chat completions."""
 
 	_instance = None
 
 	def __new__(cls, *args, **kwargs):
-		"""Ensure only one instance of AI exists."""
 		if cls._instance is None:
 			cls._instance = super().__new__(cls)
 		return cls._instance
 
 	def __init__(self):
-		"""Initialize OpenAI client and logger (once)."""
 		if hasattr(self, "_initialized") and self._initialized:
 			return
 
@@ -111,19 +108,6 @@ class AI:
 			return f"Error: {str(e)}"
 
 	def tokens_to_usd(model, context, result, cpm_context, cpm_result) -> float:
-		"""
-		Calculate cost in USD for tokens consumed by a given model.
-
-		Parameters:
-			model (str): Model name for tokenizer (e.g., "gpt-4", "gpt-3.5-turbo").
-			context (str): Input text to encode (prompt tokens).
-			result (str): Output text to encode (completion tokens).
-			cpm_context (float): Cost per million tokens for context tokens.
-			cpm_result (float): Cost per million tokens for result tokens.
-
-		Returns:
-			float: Estimated cost in USD rounded to 8 decimal places.
-		"""
 		encoding = tiktoken.encoding_for_model(model)
 		t_context = len(encoding.encode(context))
 		t_result = len(encoding.encode(result))
@@ -131,16 +115,6 @@ class AI:
 		return round(cost, 8)
 
 	def count_tokens(model, text) -> int:
-		"""
-		Count the number of tokens in a given text for a specific model.
-
-		Parameters:
-			model (str): Model name for tokenizer.
-			text (str): Text to tokenize.
-
-		Returns:
-			int: Number of tokens.
-		"""
 		encoding = tiktoken.encoding_for_model(model)
 		return len(encoding.encode(text))
 
@@ -172,17 +146,6 @@ class AI:
 		return context
 	
 	def append_context(self, context: list, role: str, content: str) -> list:
-		"""
-		Append a new message to the context.
-
-		Parameters:
-			context (list): The current context messages.
-			role (str): The role of the message ('user', 'assistant', etc.).
-			content (str): The content of the message.
-
-		Returns:
-			list: The updated context with the new message appended.
-		"""
 		context.append({"role": role, "content": content})
 
 		if not isinstance(role, str) or not isinstance(content, str):

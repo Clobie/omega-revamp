@@ -6,16 +6,6 @@ CONFIG_PATH = './config/cogs.yaml'
 COGS_DIR = './cogs'
 
 class CogLoader:
-	"""
-	Singleton Cog Loader for managing Discord bot cogs.
-	Loads cog config from YAML, auto-imports new cogs, and handles enabling,
-	disabling, loading, and reloading of cogs for the bot.
-
-	Usage:
-		from utils.cog import CogLoader
-		cog_loader = CogLoader()
-		await cog_loader.load_cogs(bot)
-	"""
 
 	_instance = None
 
@@ -25,7 +15,7 @@ class CogLoader:
 		return cls._instance
 
 	def __init__(self, config_path=CONFIG_PATH, cogs_dir=COGS_DIR, logger=None):
-		if getattr(self, '_initialized', False):
+		if hasattr(self, "_initialized") and self._initialized:
 			return
 
 		self.config_path = config_path

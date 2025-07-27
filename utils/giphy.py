@@ -7,18 +7,6 @@ from utils.config import Config
 from utils.logger import Logger
 
 class Giphy:
-	"""
-	Singleton utility class for retrieving reaction GIF URLs from the Giphy API
-	based on a concise search string generated from analyzing input text.
-
-	The class uses an AI completion to generate relevant search keywords,
-	queries the Giphy API for GIFs matching those keywords, and returns a GIF URL.
-
-	Attributes:
-		respond_chance (int): Chance (percentage) to respond with a GIF (default: 10).
-		api_url (str): Base URL for Giphy search API.
-		logger (Logger): Logger instance for logging info and errors.
-	"""
 
 	_instance = None
 
@@ -28,11 +16,7 @@ class Giphy:
 		return cls._instance
 
 	def __init__(self):
-		"""
-		Initialize the Giphy singleton utility.
-		Ensures logger and API settings are initialized only once.
-		"""
-		if getattr(self, '_initialized', False):
+		if hasattr(self, "_initialized") and self._initialized:
 			return
 
 		self.logger = Logger()

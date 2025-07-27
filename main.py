@@ -47,13 +47,13 @@ async def main_thread():
 	)
 	success = await core.run()
 	if not success:
-		print("[Main] Core run failed, exiting.")
+		print("Core run failed, exiting.")
 		sys.exit(1)
 
 if __name__ == "__main__":
 	try:
 		asyncio.run(main_thread())
 	except (KeyboardInterrupt, asyncio.CancelledError):
-		print("\n[Main] Shutdown requested, exiting gracefully.")
+		print("\nShutdown requested, exiting gracefully.")
 		sys.exit(0)
 

@@ -11,10 +11,6 @@ from typing import Any, List, Union
 
 
 class Common:
-	"""
-	Utility class for common helper functions including string manipulation,
-	timestamp parsing, randomness, validation, and formatting.
-	"""
 
 	_SUPERSCRIPT_MAP = str.maketrans(
 		"0123456789abcdefghijklmnopqrstuvwxyz.-",

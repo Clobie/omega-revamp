@@ -68,7 +68,7 @@ docker-compose -f docker-compose-dev.yaml down
 
 Cogs are modular components of the bot and should be placed in the `./cogs/` directory.
 
-If a cog requires persistent or static data, place it in a subdirectory of `./cogs/cogdata/` using the same name as the cog.
+If a cog requires persistent or static data, place it in a subdirectory of `./cogs/data/` using the same name as the cog.
 
 ### 📄 Example Cog: `cogs/template.py`
 
@@ -96,7 +96,7 @@ root/
 ├── cogs/
 │   ├── template.py
 │   └── ...
-└── cogs/cogdata/
+└── cogs/data/
     └── template/
         └── any_data_you_need.json
 ```
@@ -108,7 +108,8 @@ root/
 ## 📝 Notes
 
 - Ensure Docker and Docker Compose are installed and running.
-- All general configuration is handled through the `.env` file.
+- All secret configuration is handled through the `.env` file.
+- All bot configuration is handled through `bot.yaml` file.
 - All cog configuration is handled through the `cogs.yaml` file.
 - All personalities are handles through the `personalities.yaml` file.
 - The Discord bot’s coverage report will be available at:  

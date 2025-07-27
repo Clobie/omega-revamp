@@ -4,31 +4,16 @@ import logging
 import os
 
 class Logger:
-	"""
-	Singleton Logger Utility with multiple file handlers and console output.
 
-	Usage:
-		from utils.log import Logger
-		logger = Logger()
-		logger.info("Message")
-	"""
-
-	_instance = None  # Singleton instance holder
+	_instance = None
 
 	def __new__(cls, *args, **kwargs):
-		"""Ensure only one instance is created."""
 		if cls._instance is None:
 			cls._instance = super().__new__(cls)
 		return cls._instance
 
 	def __init__(self, log_dir='./logs'):
-		"""
-		Initialize logger with file handlers and console stream (only once).
-
-		Args:
-			log_dir (str): Directory for log files. Default is './logs'.
-		"""
-		if hasattr(self, '_initialized') and self._initialized:
+		if hasattr(self, "_initialized") and self._initialized:
 			return
 
 		self.logger = logging.getLogger("app_logger")
@@ -53,16 +38,6 @@ class Logger:
 		self._initialized = True
 
 	def _create_handler(self, level, filepath):
-		"""
-		Create a file handler for a specific log level.
-
-		Args:
-			level (int): Logging level.
-			filepath (str): Path to the log file.
-
-		Returns:
-			logging.FileHandler: Configured file handler.
-		"""
 		handler = logging.FileHandler(filepath, 'a', 'utf-8')
 		handler.setLevel(level)
 		handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - [%(filename)s] %(message)s'))

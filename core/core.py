@@ -17,9 +17,6 @@ from utils.giphy import Giphy
 from utils.rag import Rag
 
 class Core:
-	"""
-	Core class to initialize and run the Discord bot along with its utilities.
-	"""
 
 	def __init__(self, config_path: str, personalities_path: str, cogs_path: str, cogs_config_path: str):
 		self.bot = None
@@ -36,13 +33,6 @@ class Core:
 		self.rag = None
 
 	def load_utils(self) -> bool:
-		"""
-		Initialize and validate all utility singletons with required dependencies.
-
-		Returns:
-			bool: True if all utils initialized successfully, False otherwise.
-		"""
-
 		try:
 			self.config = Config(self.config_path)
 			self.db = Database(self.config)
@@ -58,12 +48,6 @@ class Core:
 			return False
 
 	def setup_bot(self) -> bool:
-		"""
-		Set up the Discord bot with intents and command prefix.
-
-		Returns:
-			bool: True if setup succeeded.
-		"""
 		try:
 			intents = discord.Intents.all()
 			self.bot = commands.Bot(
@@ -80,20 +64,12 @@ class Core:
 			return False
 
 	async def load_cogs(self):
-		"""
-		Async method to load all enabled cogs using CogLoader.
-		Parallelizes cog loading for faster startup.
-		"""
 		cog_names = await self.cog_loader.get_enabled_cogs()
 		await asyncio.gather(
 			*(self.cog_loader.load_cog(self.bot, cog_name) for cog_name in cog_names)
 		)
 
 	async def run(self):
-		"""
-		Main entrypoint to run the bot.
-		"""
-
 		try:
 			self.logger.info("Loading utilities...")
 			if not self.load_utils():

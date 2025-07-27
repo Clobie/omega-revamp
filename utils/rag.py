@@ -7,20 +7,15 @@ from chromadb.config import Settings
 from utils.logger import Logger
 
 class Rag:
-	"""
-	Singleton Retrieval-Augmented Generation backend using SentenceTransformer embeddings and ChromaDB.
-	"""
 
 	_instance = None
 
 	def __new__(cls, *args, **kwargs):
-		"""Ensure only one Rag instance is created."""
 		if cls._instance is None:
 			cls._instance = super().__new__(cls)
 		return cls._instance
 
 	def __init__(self):
-		"""Initialize embedder and persistent Chroma collection (once)."""
 		if hasattr(self, "_initialized") and self._initialized:
 			return
 

@@ -5,33 +5,16 @@ import psycopg2
 from utils.logger import Logger
 
 class Database:
-	"""
-	Singleton PostgreSQL Database utility for connection and query execution.
-
-	Usage:
-		from utils.database import Database
-		db = Database(config, logger)
-		result = db.run_script("SELECT * FROM users WHERE id = %s", (user_id,))
-		db.close()
-	"""
 
 	_instance = None
 
 	def __new__(cls, *args, **kwargs):
-		"""Ensure only one instance is created."""
 		if cls._instance is None:
 			cls._instance = super().__new__(cls)
 		return cls._instance
 
 	def __init__(self, config):
-		"""
-		Initialize DB connection and cursor (only once).
-
-		Args:
-			config: Config object with DB_NAME, DB_USER, DB_PASS, DB_HOST, DB_PORT.
-			logger: Logger instance for logging.
-		"""
-		if hasattr(self, '_initialized') and self._initialized:
+		if hasattr(self, "_initialized") and self._initialized:
 			return
 
 		self.logger = Logger()
@@ -42,7 +25,6 @@ class Database:
 		self._initialized = True
 
 	def connect_to_db(self):
-		"""Connect to PostgreSQL and return connection."""
 		try:
 			conn = psycopg2.connect(
 				dbname=self.cfg.DB_NAME,
@@ -59,9 +41,6 @@ class Database:
 
 	def run_script(self, script, params=None):
 		"""
-		Execute SQL command or script file and return results or affected rows.
-		Retry connection once if a connection-related error occurs.
-
 		Args:
 			script (str): SQL query or filename ending with '.sql'.
 			params (tuple/dict, optional): Parameters for query placeholders.
@@ -92,7 +71,6 @@ class Database:
 		try:
 			return execute_query()
 		except (psycopg2.OperationalError, psycopg2.InterfaceError) as e:
-			# These errors typically indicate connection problems
 			self.logger.warning(f"Database operation failed, retrying once: {e}")
 			try:
 				self.connection.close()
@@ -110,7 +88,6 @@ class Database:
 			return False
 
 	def close(self):
-		"""Close cursor and DB connection."""
 		self.cursor.close()
 		self.connection.close()
 		self.logger.info("Database connection closed")

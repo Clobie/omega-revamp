@@ -6,17 +6,6 @@ from utils.logger import Logger
 
 
 class Encoder:
-	"""
-	Singleton Utility for encoding and decoding various formats.
-
-	Usage:
-	    from utils.encoder import Encoder
-	    encoder = Encoder()
-	    hex_str = encoder.encode_hex("hello")
-	    base64_str = encoder.encode_base64("hello")
-	    plain1 = encoder.decode_hex(hex_str)
-	    plain2 = encoder.decode_base64(base64_str)
-	"""
 
 	_instance = None
 
@@ -26,7 +15,7 @@ class Encoder:
 		return cls._instance
 
 	def __init__(self):
-		if getattr(self, "_initialized", False):
+		if hasattr(self, "_initialized") and self._initialized:
 			return
 
 		self.logger = Logger()

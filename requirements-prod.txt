@@ -12,3 +12,6 @@ numpy
 PyYAML
 sentence-transformers
 chromadb
+fastapi
+uvicorn
+pydantic
