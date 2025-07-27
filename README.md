@@ -1,6 +1,6 @@
 # omega-revamp
 
-A development environment for the Omega Discord bot using Docker Compose.
+AI driven discord bot.
 
 ---
 
